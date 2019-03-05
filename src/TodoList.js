@@ -3,20 +3,20 @@ import TodoItems from "./TodoItems";
 import "./TodoList.css";
 
 class TodoList extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    items: []
+  };
+  deleteItem = key => {
+    const filteredItems = this.state.items.filter(item => item.key !== key);
 
-    this.state = {
-      items: []
-    };
-
-    this.addItem = this.addItem.bind(this);
-  }
-
-  addItem(e) {
-    if (this._inputElement.value !== "") {
+    this.setState({
+      items: filteredItems
+    });
+  };
+  addItem = e => {
+    if (this.inputElement.value !== "") {
       const newItem = {
-        text: this._inputElement.value,
+        text: this.inputElement.value,
         key: Date.now()
       };
       this.setState(prevState => {
@@ -24,11 +24,15 @@ class TodoList extends Component {
           items: prevState.items.concat(newItem)
         };
       });
-      this._inputElement.value = "";
-      console.log(this.state.items);
-      e.preventDefault();
+
+      // clears the input field
+      this.inputElement.value = "";
     }
-  }
+    // prevents the default behavior which is to refresh the dom
+    e.preventDefault();
+  };
+
+  // onChangeHandler to refactor refs
 
   render() {
     return (
@@ -36,13 +40,13 @@ class TodoList extends Component {
         <div className="header">
           <form onSubmit={this.addItem}>
             <input
-              ref={a => (this._inputElement = a)}
-              placeholder="type things here"
+              ref={a => (this.inputElement = a)}
+              placeholder="type stuff"
             />
-            <button type="submit">+</button>
+            <button type="submit">add</button>
           </form>
         </div>
-        <TodoItems entries={this.state.items} />
+        <TodoItems entries={this.state.items} delete={this.deleteItem} />
       </div>
     );
   }
